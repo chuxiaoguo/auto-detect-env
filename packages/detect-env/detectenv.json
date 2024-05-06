@@ -1,0 +1,8 @@
+{
+  "include": ["https://127.0.0.2:8848"],
+  "exclude": ["https://127.0.0.1:8848"],
+  "ignore": ["DEV_API_URL"],
+  "devFilePath": ".env.development",
+  "prodFilePath": ".env.production",
+  "level": "info"
+}

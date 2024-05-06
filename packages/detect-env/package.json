@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
-    "dev": "tsx scripts/execute.ts",
+    "dev": "tsx watch src/index.ts",
     "build": "rollup --config rollup.config.ts --configPlugin typescript"
   },
   "keywords": [],

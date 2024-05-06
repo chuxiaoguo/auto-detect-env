@@ -7,13 +7,20 @@
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "postinstall": "simple-git-hooks",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\""
   },
   "engines": {
     "node": ">=18.18.0"
   },
   "simple-git-hooks": {
-    "pre-commit": "pnpm exec lint-staged --concurrent false"
+    "pre-commit": "pnpm exec lint-staged --concurrent false",
+    "commit-msg": "pnpm exec commitlint --edit"
+  },
+  "lint-staged": {
+    "*.{js,ts}": [
+      "pnpm exec eslint --fix",
+      "pnpm exec prettier --write"
+    ]
   },
   "keywords": [],
   "author": "",
