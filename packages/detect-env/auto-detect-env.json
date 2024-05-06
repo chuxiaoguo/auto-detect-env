@@ -1,0 +1,7 @@
+{
+  "include": ["https://google.com"],
+  "exclude": ["https://baidu.com"],
+  "ignore": ["DEV_API_URL"],
+  "devFilePath": "./.env.development",
+  "prodFilePath": "./.env.production"
+}
