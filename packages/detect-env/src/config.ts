@@ -16,6 +16,13 @@ export const enum LevelEnum {
   ERROR = 'error'
 }
 
+export const DEFAULT_CONFIG: ConfigType = {
+  include: [],
+  exclude: [],
+  ignore: [],
+  devFilePath: '.env.development',
+  prodFilePath: '.env.production'
+}
 export interface ConfigType {
   include: string[]
   exclude: string[]
@@ -25,13 +32,28 @@ export interface ConfigType {
   level?: LevelEnum
 }
 
-export const DEFAULT_CONFIG: ConfigType = {
-  include: [],
-  exclude: [],
-  ignore: [],
-  devFilePath: '.env.development',
-  prodFilePath: '.env.production'
+export interface CacOptions {
+  e: string[]
+  i: string[]
+  l: LevelEnum
+  dev: string
+  prod: string
 }
+
+const KeySemantic = {
+  e: 'exclude',
+  i: 'ignore',
+  l: 'level',
+  dev: 'devFilePath',
+  prod: 'prodFilePath'
+}
+// export const resolveCacOption = (options: CacOptions & Record<string, any>): ConfigType => {
+//   const semanticOptions: ConfigType & Record<string, any> = {} as ConfigType
+//   Object.keys(options).forEach(simpleKey => {
+//     semanticOptions[KeySemantic[simpleKey]] = options[simpleKey]
+//   })
+//   return semanticOptions
+// }
 
 /**
  * 根据文件路径和类型获取配置对象

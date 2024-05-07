@@ -6,10 +6,11 @@ import { detecting } from './detection'
 import { createHandleError } from './log'
 
 chalk.level = 3
-;(async () => {
+export const startToDetecting = async (options: any): Promise<void> => {
   try {
-    const config = await resolveConfig('./detectenv.json')
+    const config = !isEmpty(options) ? options : await resolveConfig('./detectenv.json')
     const mergeConfig = !isEmpty(config) ? config : DEFAULT_CONFIG
+    console.log(options)
     const {
       include,
       exclude,
@@ -73,4 +74,4 @@ chalk.level = 3
   } catch (error) {
     console.error('Error fetching config:', error.message)
   }
-})()
+}
