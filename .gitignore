@@ -1,7 +1,6 @@
 .DS_Store
 .idea
 .pnpm-store
-/.vscode/
 /docs/.vitepress/cache
 dist
 node_modules
