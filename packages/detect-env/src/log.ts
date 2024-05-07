@@ -17,15 +17,15 @@ const printLog = (type: LevelEnum, ...message: string[]) => {
 }
 
 export const createHandleError = (level: LevelEnum) => {
-  return (...message: (string | boolean)[]): void => {
-    const shouldExit = message[0] === true
-    const restMessage = shouldExit ? message.slice(1) : message.slice(0)
+  return (maybeExist: string | boolean, ...message: string[]): void => {
+    const shouldExit = maybeExist === true
+    const restMessage = shouldExit ? message : [maybeExist as string, ...message]
     if (isInfo(level)) {
-      printLog(shouldExit ? LevelEnum.WARN : level, ...(restMessage as string[]))
+      printLog(shouldExit ? LevelEnum.WARN : level, ...restMessage)
       return
     }
     if (isWarn(level)) {
-      printLog(shouldExit ? LevelEnum.ERROR : level, ...(restMessage as string[]))
+      printLog(shouldExit ? LevelEnum.ERROR : level, ...restMessage)
       if (shouldExit) {
         process.exit(1)
       }

@@ -20,7 +20,6 @@ chalk.level = 3
     } = mergeConfig
     const handleError = createHandleError(level)
 
-    // 判断配置文件是否存在
     if (!isFileExists(devFilePath)) {
       handleError(`${devFilePath} is not exists!`)
       return

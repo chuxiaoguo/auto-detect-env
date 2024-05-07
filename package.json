@@ -7,6 +7,7 @@
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "postinstall": "simple-git-hooks",
+    "dev": "pnpm --filter='./packages/detect-env' run dev",
     "test": "echo \"Error: no test specified\""
   },
   "engines": {

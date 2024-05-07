@@ -4,5 +4,5 @@
   "ignore": ["DEV_API_URL"],
   "devFilePath": ".env.development",
   "prodFilePath": ".env.production",
-  "level": "info"
+  "level": "warn"
 }
