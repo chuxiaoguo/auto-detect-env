@@ -32,6 +32,7 @@ export const createHandleError = (level: LevelEnum) => {
       return
     }
     if (isError(level)) {
+      printLog(LevelEnum.ERROR, ...restMessage)
       return process.exit(1)
     }
   }

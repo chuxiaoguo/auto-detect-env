@@ -74,7 +74,7 @@ export const detecting = (
   })
 
   // 敏感词检测
-  const sensitiveWords = isEmpty(ignore)
+  const sensitiveWords = !isEmpty(ignore)
     ? filter(DEFAULT_SENSITIVE_WORDS, word => ignore.includes(word))
     : DEFAULT_SENSITIVE_WORDS
   const existSensitiveWords = detectingSensitiveWords(prodConfig, sensitiveWords)

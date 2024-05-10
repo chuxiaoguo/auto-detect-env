@@ -46,14 +46,17 @@ const KeySemantic = {
   l: 'level',
   dev: 'devFilePath',
   prod: 'prodFilePath'
+} as Record<string, string>
+
+export const resolveCacOption = <T extends CacOptions & Record<string, string>>(
+  options: T
+): ConfigType => {
+  const semanticOptions: ConfigType & Record<string, any> = {} as ConfigType
+  Object.keys(options).forEach(simpleKey => {
+    semanticOptions[KeySemantic[simpleKey]] = options[simpleKey]
+  })
+  return semanticOptions
 }
-// export const resolveCacOption = (options: CacOptions & Record<string, any>): ConfigType => {
-//   const semanticOptions: ConfigType & Record<string, any> = {} as ConfigType
-//   Object.keys(options).forEach(simpleKey => {
-//     semanticOptions[KeySemantic[simpleKey]] = options[simpleKey]
-//   })
-//   return semanticOptions
-// }
 
 /**
  * 根据文件路径和类型获取配置对象

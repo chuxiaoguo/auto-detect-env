@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash-es'
 import chalk from 'chalk'
-import { DEFAULT_CONFIG, LevelEnum, resolveConfig } from './config'
+import { DEFAULT_CONFIG, LevelEnum, resolveCacOption, resolveConfig } from './config'
 import { isFileExists, readFileToObject } from './fs'
 import { detecting } from './detection'
 import { createHandleError } from './log'
@@ -8,9 +8,11 @@ import { createHandleError } from './log'
 chalk.level = 3
 export const startToDetecting = async (options: any): Promise<void> => {
   try {
-    const config = !isEmpty(options) ? options : await resolveConfig('./detectenv.json')
+    const config = !isEmpty(options)
+      ? resolveCacOption(options)
+      : await resolveConfig('./detectenv.json')
     const mergeConfig = !isEmpty(config) ? config : DEFAULT_CONFIG
-    console.log(options)
+    console.log('zcg', options)
     const {
       include,
       exclude,
