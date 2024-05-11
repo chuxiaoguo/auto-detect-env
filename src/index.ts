@@ -1,26 +1,22 @@
-import { isEmpty } from 'lodash-es'
-import chalk from 'chalk'
+import { defaults, isEmpty } from 'lodash-es'
 import { DEFAULT_CONFIG, LevelEnum, resolveCacOption, resolveConfig } from './config'
 import { isFileExists, readFileToObject } from './fs'
 import { detecting } from './detection'
 import { createHandleError } from './log'
 
-chalk.level = 3
 export const startToDetecting = async (options: any): Promise<void> => {
   try {
     const config = !isEmpty(options)
       ? resolveCacOption(options)
       : await resolveConfig('./detectenv.json')
-    const mergeConfig = !isEmpty(config) ? config : DEFAULT_CONFIG
-    console.log('zcg', options)
     const {
-      include,
       exclude,
-      ignore,
+      ignoreWord,
+      sensitiveWord,
       devFilePath,
       prodFilePath,
       level = LevelEnum.WARN
-    } = mergeConfig
+    } = defaults(config ?? {}, DEFAULT_CONFIG)
     const handleError = createHandleError(level)
 
     if (!isFileExists(devFilePath)) {
@@ -46,16 +42,16 @@ export const startToDetecting = async (options: any): Promise<void> => {
       return
     }
 
-    const { existSameValueInDevAndProd, existSensitiveWords, sensitiveWords } = detecting({
-      include,
+    const { existSameValueInDevAndProd, existSensitiveWords, validSensitiveWords } = detecting({
       exclude,
-      ignore,
+      ignoreWord,
+      sensitiveWord,
       devConfig,
       prodConfig
     })
 
     const findSensitiveWordsInSentence = (sentence: string) => {
-      return sensitiveWords.find((word: string) => {
+      return validSensitiveWords.find((word: string) => {
         return sentence.indexOf(word) > -1
       })
     }

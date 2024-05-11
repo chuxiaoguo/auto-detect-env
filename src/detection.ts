@@ -3,7 +3,7 @@ import type { ConfigType } from './config'
 
 type PropType = { devConfig: Record<string, string>; prodConfig: Record<string, string> } & Pick<
   ConfigType,
-  'include' | 'exclude' | 'ignore'
+  'exclude' | 'ignoreWord' | 'sensitiveWord'
 >
 
 const DEFAULT_SENSITIVE_WORDS = [
@@ -38,19 +38,19 @@ const detectingSensitiveWords = (
   return existSensitiveWords
 }
 
-const detectingSameValueInDevAndProd = (
+const detectingSameHostInDevAndProd = (
   devConfig: Record<string, string>,
   prodConfig: Record<string, string>
 ) => {
   // 排除devConfig与prodConfig中相同的value值, 此部分只会针对url
-  const existSameValueInDev: string[] = []
+  const existSameHostInDev: string[] = []
   const isHostURL = (url: string) => url.startsWith('http') || url.startsWith('https')
   forEach(Object.entries(prodConfig), ([key, value]) => {
     if (devConfig[key] === value && isHostURL(value)) {
-      existSameValueInDev.push(value)
+      existSameHostInDev.push(value)
     }
   })
-  return existSameValueInDev
+  return existSameHostInDev
 }
 
 export const detecting = (
@@ -58,9 +58,9 @@ export const detecting = (
 ): {
   existSameValueInDevAndProd: string[]
   existSensitiveWords: string[]
-  sensitiveWords: string[]
+  validSensitiveWords: string[]
 } => {
-  const { prodConfig, devConfig, exclude, ignore } = props
+  const { prodConfig, devConfig, exclude, ignoreWord, sensitiveWord } = props
 
   // 排除prodConfig中白名单部分
   Object.entries(prodConfig).forEach(([key, value]) => {
@@ -74,17 +74,18 @@ export const detecting = (
   })
 
   // 敏感词检测
-  const sensitiveWords = !isEmpty(ignore)
-    ? filter(DEFAULT_SENSITIVE_WORDS, word => ignore.includes(word))
-    : DEFAULT_SENSITIVE_WORDS
-  const existSensitiveWords = detectingSensitiveWords(prodConfig, sensitiveWords)
+  const mergeSensitiveWords = [...DEFAULT_SENSITIVE_WORDS, ...sensitiveWord]
+  const validSensitiveWords = !isEmpty(ignoreWord)
+    ? filter(mergeSensitiveWords, word => ignoreWord.includes(word))
+    : mergeSensitiveWords
+  const existSensitiveWords = detectingSensitiveWords(prodConfig, validSensitiveWords)
 
   // 相同值检测
-  const existSameValueInDevAndProd = detectingSameValueInDevAndProd(prodConfig, devConfig)
+  const existSameValueInDevAndProd = detectingSameHostInDevAndProd(prodConfig, devConfig)
 
   return {
     existSensitiveWords,
     existSameValueInDevAndProd,
-    sensitiveWords
+    validSensitiveWords
   }
 }

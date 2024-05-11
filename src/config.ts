@@ -17,16 +17,16 @@ export const enum LevelEnum {
 }
 
 export const DEFAULT_CONFIG: ConfigType = {
-  include: [],
   exclude: [],
-  ignore: [],
+  ignoreWord: [],
+  sensitiveWord: [],
   devFilePath: '.env.development',
   prodFilePath: '.env.production'
 }
 export interface ConfigType {
-  include: string[]
   exclude: string[]
-  ignore: string[]
+  ignoreWord: string[]
+  sensitiveWord: string[]
   devFilePath: string
   prodFilePath: string
   level?: LevelEnum
@@ -35,6 +35,7 @@ export interface ConfigType {
 export interface CacOptions {
   e: string[]
   i: string[]
+  s: string[]
   l: LevelEnum
   dev: string
   prod: string
@@ -42,7 +43,8 @@ export interface CacOptions {
 
 const KeySemantic = {
   e: 'exclude',
-  i: 'ignore',
+  i: 'ignoreWord',
+  s: 'sensitiveWord',
   l: 'level',
   dev: 'devFilePath',
   prod: 'prodFilePath'
@@ -53,7 +55,10 @@ export const resolveCacOption = <T extends CacOptions & Record<string, string>>(
 ): ConfigType => {
   const semanticOptions: ConfigType & Record<string, any> = {} as ConfigType
   Object.keys(options).forEach(simpleKey => {
-    semanticOptions[KeySemantic[simpleKey]] = options[simpleKey]
+    const mapKey = KeySemantic[simpleKey]
+    if (mapKey) {
+      semanticOptions[KeySemantic[simpleKey]] = options[simpleKey]
+    }
   })
   return semanticOptions
 }
