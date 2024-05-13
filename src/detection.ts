@@ -18,13 +18,21 @@ const DEFAULT_SENSITIVE_WORDS = [
   'proxy'
 ]
 
+type DetectingSensitiveWordsResultType = {
+  key: string
+  value: string
+  sensitiveWord: string
+}[]
+
 const detectingSensitiveWords = (
   config: Record<string, string>,
   ignoreWords: string[]
-): string[] => {
-  const existSensitiveWords: string[] = []
+): DetectingSensitiveWordsResultType => {
+  const existSensitiveWords: DetectingSensitiveWordsResultType = []
   forEach(Object.entries(config), ([key, value]) => {
+    let recordSensitiveWord = ''
     const isIncludeSensitiveWord = ignoreWords.some(word => {
+      recordSensitiveWord = word
       if (word === 'http') {
         const lowerCaseValue = value.toLowerCase()
         return lowerCaseValue.includes('http') && !lowerCaseValue.includes('https')
@@ -32,7 +40,11 @@ const detectingSensitiveWords = (
       return key.toLowerCase().includes(word) || value.toLowerCase().includes(word)
     })
     if (isIncludeSensitiveWord) {
-      existSensitiveWords.push(`${key}: ${value}`)
+      existSensitiveWords.push({
+        key,
+        value,
+        sensitiveWord: recordSensitiveWord
+      })
     }
   })
   return existSensitiveWords
@@ -53,13 +65,12 @@ const detectingSameHostInDevAndProd = (
   return existSameHostInDev
 }
 
-export const detecting = (
-  props: PropType
-): {
+export type DetectingType = {
   existSameValueInDevAndProd: string[]
-  existSensitiveWords: string[]
+  existSensitiveWords: DetectingSensitiveWordsResultType
   validSensitiveWords: string[]
-} => {
+}
+export const detecting = (props: PropType): DetectingType => {
   const { prodConfig, devConfig, exclude, ignoreWord, sensitiveWord } = props
 
   // 排除prodConfig中白名单部分
@@ -76,7 +87,7 @@ export const detecting = (
   // 敏感词检测
   const mergeSensitiveWords = [...DEFAULT_SENSITIVE_WORDS, ...sensitiveWord]
   const validSensitiveWords = !isEmpty(ignoreWord)
-    ? filter(mergeSensitiveWords, word => ignoreWord.includes(word))
+    ? filter(mergeSensitiveWords, word => !ignoreWord.includes(word))
     : mergeSensitiveWords
   const existSensitiveWords = detectingSensitiveWords(prodConfig, validSensitiveWords)
 

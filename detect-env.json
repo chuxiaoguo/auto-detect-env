@@ -1,0 +1,8 @@
+{
+  "exclude": ["https://127.0.0.1:8848"],
+  "sensitiveWord": ["oasis"],
+  "ignoreWord": ["DEV_API_URL", "fat", "qa"],
+  "devFilePath": ".env.fat",
+  "prodFilePath": ".env.prd",
+  "level": "warn"
+}

@@ -1,14 +1,18 @@
+import path from 'node:path'
 import { defaults, isEmpty } from 'lodash-es'
+import chalk from 'chalk'
 import { DEFAULT_CONFIG, LevelEnum, resolveCacOption, resolveConfig } from './config'
 import { isFileExists, readFileToObject } from './fs'
+import type { DetectingType } from './detection'
 import { detecting } from './detection'
 import { createHandleError } from './log'
 
-export const startToDetecting = async (options: any): Promise<void> => {
+chalk.level = 3
+export const startToDetecting = async (options: any): Promise<DetectingType | undefined> => {
   try {
     const config = !isEmpty(options)
       ? resolveCacOption(options)
-      : await resolveConfig('./detectenv.json')
+      : await resolveConfig(path.resolve(process.cwd(), './detect-env.json'))
     const {
       exclude,
       ignoreWord,
@@ -50,16 +54,30 @@ export const startToDetecting = async (options: any): Promise<void> => {
       prodConfig
     })
 
-    const findSensitiveWordsInSentence = (sentence: string) => {
-      return validSensitiveWords.find((word: string) => {
-        return sentence.indexOf(word) > -1
-      })
-    }
+    console.log(
+      chalk.green('配置清单：'),
+      chalk.green(
+        JSON.stringify(
+          {
+            exclude,
+            ignoreWord,
+            sensitiveWord,
+            validSensitiveWords,
+            devFilePath,
+            prodFilePath
+          },
+          null,
+          2
+        )
+      )
+    )
 
     if (existSensitiveWords.length) {
       handleError(
         true,
-        `[detect-env] 检测到敏感词：\n${existSensitiveWords.map((sentence: string) => `[${findSensitiveWordsInSentence(sentence)}] ${sentence}`).join('\n')}`
+        `[detect-env] 检测到敏感词：\n${existSensitiveWords
+          .map(({ key, value, sensitiveWord }) => `[${sensitiveWord}] ${key}: ${value}`)
+          .join('\n')}`
       )
     }
 
@@ -69,7 +87,15 @@ export const startToDetecting = async (options: any): Promise<void> => {
         `[detect-env] 检测到开发环境和生产环境存在相同配置：\n${existSameValueInDevAndProd.join('\n')}`
       )
     }
+
+    console.log(chalk.green('检测完成'))
+    return {
+      existSameValueInDevAndProd,
+      existSensitiveWords,
+      validSensitiveWords
+    }
   } catch (error) {
     console.error('Error fetching config:', error.message)
+    throw new Error(error.message)
   }
 }
