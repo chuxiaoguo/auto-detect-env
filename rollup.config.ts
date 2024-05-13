@@ -4,7 +4,7 @@ import { defineConfig } from 'rollup'
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import typescript from '@rollup/plugin-typescript'
-import json from '@rollup/plugin-json' // 如果你的插件使用了JSON文件
+import json from '@rollup/plugin-json'
 import bundleAnalyzer from 'rollup-plugin-bundle-analyzer'
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
@@ -14,9 +14,9 @@ const BasePlugin = [
     tsconfig: path.resolve(__dirname, 'tsconfig.json')
   }),
   resolve({ preferBuiltins: true }),
-  commonjs(), // 转换CommonJS模块
-  // builtins(), // 提供Node.js内置模块模拟
-  // globals(), // 提供Node.js全局变量模拟
+  commonjs(),
+  // builtins(),
+  // globals(),
   json(),
   bundleAnalyzer({})
 ]
